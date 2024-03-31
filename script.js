@@ -2,35 +2,45 @@ document.addEventListener("DOMContentLoaded", function() {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     let isDrawing = false;
+    let lastX = 0;
+    let lastY = 0;
 
+    // Добавляем обработчики событий для касания
+    canvas.addEventListener('touchstart', startDrawing);
+    canvas.addEventListener('touchmove', draw);
+    canvas.addEventListener('touchend', stopDrawing);
+    canvas.addEventListener('touchcancel', stopDrawing);
+
+    // Добавляем обработчики событий для мыши (поддержка для компьютеров)
     canvas.addEventListener('mousedown', startDrawing);
     canvas.addEventListener('mousemove', draw);
     canvas.addEventListener('mouseup', stopDrawing);
     canvas.addEventListener('mouseout', stopDrawing);
 
     function startDrawing(e) {
+        e.preventDefault(); // Предотвращаем действия по умолчанию (например, прокрутку страницы)
         isDrawing = true;
-        draw(e);
+        [lastX, lastY] = [e.type.includes('mouse') ? e.offsetX : e.touches[0].clientX - canvas.getBoundingClientRect().left,
+                          e.type.includes('mouse') ? e.offsetY : e.touches[0].clientY - canvas.getBoundingClientRect().top];
     }
 
     function draw(e) {
+        e.preventDefault();
         if (!isDrawing) return;
 
-        const x = e.offsetX;
-        const y = e.offsetY;
+        const x = e.type.includes('mouse') ? e.offsetX : e.touches[0].clientX - canvas.getBoundingClientRect().left;
+        const y = e.type.includes('mouse') ? e.offsetY : e.touches[0].clientY - canvas.getBoundingClientRect().top;
 
         ctx.lineWidth = 2;
         ctx.lineCap = 'round';
         ctx.strokeStyle = '#000';
 
-        if (ctx.beginPath) {
-            ctx.beginPath();
-            ctx.moveTo(x, y);
-        }
-        if (ctx.lineTo) {
-            ctx.lineTo(x, y);
-            ctx.stroke();
-        }
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+
+        [lastX, lastY] = [x, y];
     }
 
     function stopDrawing() {
