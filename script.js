@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function() {
     function saveSignature() {
         const dataURL = canvas.toDataURL();
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'https://768c-37-204-52-76.ngrok-free.app/save-signature', true);
+        xhr.open('POST', 'https://63a3-37-204-52-76.ngrok-free.app/save-signature', true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4) {
